@@ -186,14 +186,14 @@ public class NavigationBarView extends FrameLayout implements
     private ScreenPinningNotify mScreenPinningNotify;
     private Rect mSamplingBounds = new Rect();
 
-    private boolean mBlockedGesturalNavigation;
-
     private int mBasePaddingBottom;
     private int mBasePaddingLeft;
     private int mBasePaddingRight;
     private int mBasePaddingTop;
 
     private ViewGroup mNavigationBarContents;
+
+    private boolean mBlockedGesturalNavigation;
 
     private class NavTransitionListener implements TransitionListener {
         private boolean mBackTransitioning;
@@ -914,6 +914,7 @@ public class NavigationBarView extends FrameLayout implements
             Log.d(TAG, "Updating panel sysui state flags: panelView=" + mPanelView);
         }
         if (mPanelView != null) {
+            mPanelView.setBlockedGesturalNavigation(mBlockedGesturalNavigation);
             mPanelView.updateSystemUiStateFlags();
         }
     }
@@ -938,6 +939,7 @@ public class NavigationBarView extends FrameLayout implements
         mBlockedGesturalNavigation = blocked;
         mEdgeBackGestureHandler.setBlockedGesturalNavigation(blocked);
         updateDisabledSystemUiStateFlags();
+        updatePanelSystemUiStateFlags();
     }
 
     /**

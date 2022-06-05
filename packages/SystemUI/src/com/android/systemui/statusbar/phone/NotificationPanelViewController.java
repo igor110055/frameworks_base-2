@@ -663,6 +663,8 @@ public class NotificationPanelViewController extends PanelViewController {
 
     private Optional<KeyguardUnfoldTransition> mKeyguardUnfoldTransition;
 
+    private boolean mBlockedGesturalNavigation;
+
     private NotificationStackScrollLayout mStackScrollLayout;
     private KeyguardStatusView mKeyguardStatusView;
 
@@ -706,8 +708,6 @@ public class NotificationPanelViewController extends PanelViewController {
             mVibratorHelper.vibrate(VibrationEffect.EFFECT_STRENGTH_MEDIUM);
         }
     };
-
-    private boolean mBlockedGesturalNavigation = false;
 
     @Inject
     public NotificationPanelViewController(NotificationPanelView view,
@@ -919,13 +919,6 @@ public class NotificationPanelViewController extends PanelViewController {
             }
         }
 
-        mKeyguardStatusBarViewController =
-                mKeyguardStatusBarViewComponentFactory.build(
-                        mKeyguardStatusBar,
-                        mNotificationPanelViewStateProvider)
-                        .getKeyguardStatusBarViewController();
-        mKeyguardStatusBarViewController.init();
-
         mNotificationContainerParent = mView.findViewById(R.id.notification_container_parent);
         updateViewControllers(
                 mView.findViewById(R.id.keyguard_status_view),
@@ -1033,6 +1026,13 @@ public class NotificationPanelViewController extends PanelViewController {
                 mKeyguardStatusViewComponentFactory.build(keyguardStatusView);
         mKeyguardStatusViewController = statusViewComponent.getKeyguardStatusViewController();
         mKeyguardStatusViewController.init();
+
+        mKeyguardStatusBarViewController =
+                mKeyguardStatusBarViewComponentFactory.build(
+                        mKeyguardStatusBar,
+                        mNotificationPanelViewStateProvider)
+                        .getKeyguardStatusBarViewController();
+        mKeyguardStatusBarViewController.init();
 
         if (mKeyguardUserSwitcherController != null) {
             // Try to close the switcher so that callbacks are triggered if necessary.
@@ -1169,6 +1169,15 @@ public class NotificationPanelViewController extends PanelViewController {
                 R.layout.keyguard_status_view, mNotificationContainerParent, false);
         mKeyguardStatusView = keyguardStatusView;
         mNotificationContainerParent.addView(keyguardStatusView, statusIndex);
+
+        // Re-inflate the keyguard status bar.
+        statusIndex = mView.indexOfChild(mKeyguardStatusBar);
+        mView.removeView(mKeyguardStatusBar);
+        mKeyguardStatusBar = (KeyguardStatusBarView) mLayoutInflater.inflate(
+                R.layout.keyguard_status_bar, mView, false);
+        mView.addView(mKeyguardStatusBar);
+        mKeyguardStatusBar.setVisibility(isOnKeyguard() ? View.VISIBLE : View.INVISIBLE);
+
         // When it's reinflated, this is centered by default. If it shouldn't be, this will update
         // below when resources are updated.
         mStatusViewCentered = true;
@@ -3059,7 +3068,7 @@ public class NotificationPanelViewController extends PanelViewController {
             alpha = 0;
         }
         mNotificationStackScrollLayoutController.setAlpha(alpha);
-        if (mBarState != StatusBarState.KEYGUARD && !isFullyCollapsed()) {
+        if (mBarState != StatusBarState.KEYGUARD && !isFullyCollapsed() || !isPanelVisibleBecauseOfHeadsUp()) {
             mStatusBar.updateDismissAllVisibility(true);
         }
         mStatusBar.getPulseController().setQSShowing(mBarState != StatusBarState.KEYGUARD && !isFullyCollapsed());
@@ -4356,7 +4365,7 @@ public class NotificationPanelViewController extends PanelViewController {
         mSysUiState.setFlag(SYSUI_STATE_NOTIFICATION_PANEL_EXPANDED,
                 isFullyExpanded() && !isInSettings())
                 .setFlag(SYSUI_STATE_QUICK_SETTINGS_EXPANDED,
-                    mBlockedGesturalNavigation || isInSettings())
+                            mBlockedGesturalNavigation || isInSettings())
                 .commitUpdate(mDisplayId);
     }
 
@@ -4679,6 +4688,12 @@ public class NotificationPanelViewController extends PanelViewController {
             if (DEBUG) Log.d(TAG, "onThemeChanged");
             mThemeResId = mView.getContext().getThemeResId();
             reInflateViews();
+        }
+
+        @Override
+        public void onUiModeChanged() {
+            if (DEBUG) Log.d(TAG, "onUiModeChanged");
+            resetViews(true);
         }
 
         @Override
@@ -5162,6 +5177,7 @@ public class NotificationPanelViewController extends PanelViewController {
         boolean debug = true;
         if (visibility && getExpandedFraction() != 1) {
             mNotificationStackScroller.setVisibility(GONE);
+            mStatusBar.updateDismissAllVisibility(false);
             ExpandableNotificationRow row = mHeadsUpManager.getTopEntry().getRow();
             String pkgname = row.getEntry().getSbn().getPackageName();
             Drawable icon = null;

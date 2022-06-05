@@ -797,11 +797,6 @@ public class VolumeDialogImpl implements VolumeDialog,
 
     private void addRow(int stream, int iconRes, int iconMuteRes, boolean important,
             boolean defaultStream) {
-        addRow(stream, iconRes, iconMuteRes, important, defaultStream, false);
-    }
-
-    private void addRow(int stream, int iconRes, int iconMuteRes, boolean important,
-            boolean defaultStream, boolean dynamic) {
         if (D.BUG) Slog.d(TAG, "Adding row for stream " + stream);
         VolumeRow row = new VolumeRow();
         initRow(row, stream, iconRes, iconMuteRes, important, defaultStream);
@@ -1651,6 +1646,7 @@ public class VolumeDialogImpl implements VolumeDialog,
     private boolean isExpandableRowH(VolumeRow row) {
         return row != null && row != mDefaultRow && !row.defaultStream
                 && (row.stream == STREAM_RING
+                        || (row.stream == STREAM_NOTIFICATION && !mState.linkedNotification)
                         || row.stream == STREAM_ALARM
                         || row.stream == STREAM_MUSIC);
     }
@@ -2006,7 +2002,7 @@ public class VolumeDialogImpl implements VolumeDialog,
             mDynamic.put(stream, true);
             if (findRow(stream) == null) {
                 addRow(stream, R.drawable.ic_volume_remote, R.drawable.ic_volume_remote_mute, true,
-                        false, true);
+                        false);
             }
         }
 

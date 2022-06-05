@@ -612,11 +612,6 @@ public class StatusBarCommandQueueCallbacks implements CommandQueue.Callbacks {
         mStatusBar.toggleSplitScreenMode(-1 /* metricsDockAction */, -1 /* metricsUndockAction */);
     }
 
-    @Override
-    public void setBlockedGesturalNavigation(boolean blocked) {
-        mStatusBar.setBlockedGesturalNavigation(blocked);
-    }
-
     private boolean isGoingToSleep() {
         return mWakefulnessLifecycle.getWakefulness()
                 == WakefulnessLifecycle.WAKEFULNESS_GOING_TO_SLEEP;
@@ -671,6 +666,13 @@ public class StatusBarCommandQueueCallbacks implements CommandQueue.Callbacks {
             if (mFlashlightController.hasFlashlight() && mFlashlightController.isAvailable()) {
                 mFlashlightController.setFlashlight(enable);
             }
+        }
+    }
+
+    @Override
+    public void setBlockedGesturalNavigation(boolean blocked) {
+        if (mStatusBar.getNavigationBarView() != null) {
+            mStatusBar.getNavigationBarView().setBlockedGesturalNavigation(blocked);
         }
     }
 }

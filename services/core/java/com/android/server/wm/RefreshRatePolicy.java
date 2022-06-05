@@ -168,7 +168,7 @@ class RefreshRatePolicy {
             return w.mAttrs.preferredMinDisplayRefreshRate;
         }
 
-        final String packageName = w.getOwningPackage();
+        String packageName = w.getOwningPackage();
         // If app is using Camera, we set both the min and max refresh rate to the camera's
         // preferred refresh rate to make sure we don't end up with a refresh rate lower
         // than the camera capture rate, which will lead to dropping camera frames.

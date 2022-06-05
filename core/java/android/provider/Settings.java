@@ -6225,12 +6225,6 @@ public final class Settings {
         public static final String ARTWORK_MEDIA_FORCE_EXPAND = "artwork_media_force_expand";
 
         /**
-         * Whether to pulse ambient on new music tracks
-         * @hide
-         */
-        public static final String PULSE_ON_NEW_TRACKS = "pulse_on_new_tracks";
-
-        /**
          * @hide
          */
         public static final String OMNI_KEYGUARD_SHOW_BATTERY_BAR = "sysui_keyguard_show_battery_bar";
@@ -6487,12 +6481,6 @@ public final class Settings {
          * @hide
          */
         public static final String HEADS_UP_NOTIFICATIONS_THRESHOLD = "heads_up_notifications_threshold";
-
-        /**
-         * Whether to launch default music player when headset plugged in
-         * @hide
-         */
-        public static final String HEADSET_CONNECT_PLAYER = "headset_connect_player";
 
         /**
          * Enable fod detection even when screen is off
@@ -6760,7 +6748,6 @@ public final class Settings {
             PRIVATE_SETTINGS.add(SHOW_APP_VOLUME);
             PRIVATE_SETTINGS.add(SENSOR_BLOCK);
             PRIVATE_SETTINGS.add(LOCK_HIDE_STATUS_BAR);
-            PRIVATE_SETTINGS.add(HEADSET_CONNECT_PLAYER);
             PRIVATE_SETTINGS.add(HIGH_TOUCH_POLLING_RATE_ENABLE);
             PRIVATE_SETTINGS.add(HIGH_TOUCH_SENSITIVITY_ENABLE);
             PRIVATE_SETTINGS.add(BATTERY_LEVEL_COLORS);
@@ -11449,6 +11436,14 @@ public final class Settings {
          */
         @Readable
         public static final String TAP_GESTURE = "tap_gesture";
+
+        /**
+         * Whether to skip biometric auth confirmation
+         * @hide
+         */
+        @Readable
+        public static final String IGNORE_AUTH_CONFIRMATION = "ignore_auth_confirmation";
+
 
         /**
          * Controls whether the people strip is enabled.
@@ -18178,6 +18173,18 @@ public final class Settings {
          * @hide
          */
         public static final String ALARM_BLOCKING_ENABLED = "alarm_blocking_enabled";
+
+        /**
+         * Set whether speaker media can be muted by ringer mode.
+         * @hide
+         */
+        public static final String RINGER_MUTE_SPEAKER_MEDIA = "ringer_mute_speaker_media";
+
+        /**
+         * The saved last speaker media volume before setting to silent or vibrate.
+         * @hide
+         */
+        public static final String SAVED_SPEAKER_MEDIA_VOLUME = "saved_speaker_media_volume";
     }
 
     /**

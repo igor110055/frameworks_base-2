@@ -198,7 +198,9 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
 
     @Override
     protected void onViewAttached() {
+        if (CUSTOM_CLOCKS_ENABLED) {
             mClockManager.addOnClockChangedListener(mClockChangedListener);
+        }
         mColorExtractor.addOnColorsChangedListener(mColorsListener);
         mView.updateColors(getGradientColors());
         mKeyguardClockTopMargin =
@@ -252,7 +254,9 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
 
     @Override
     protected void onViewDetached() {
+        if (CUSTOM_CLOCKS_ENABLED) {
             mClockManager.removeOnClockChangedListener(mClockChangedListener);
+        }
         mColorExtractor.removeOnColorsChangedListener(mColorsListener);
         mView.setClockPlugin(null, mStatusBarStateController.getState());
 
@@ -268,6 +272,10 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
                 mView.getResources().getDimensionPixelSize(R.dimen.keyguard_clock_top_margin);
 
         updateClockLayout();
+    }
+
+    public void onThemeChanged() {
+        mView.onThemeChanged();
     }
 
     private void updateClockLayout() {

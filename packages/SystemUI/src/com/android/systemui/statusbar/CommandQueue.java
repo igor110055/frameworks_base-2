@@ -1178,20 +1178,20 @@ public class CommandQueue extends IStatusBar.Stub implements
     }
 
     @Override
+    public void toggleCameraFlashState(boolean enable) {
+        synchronized (mLock) {
+            mHandler.removeMessages(MSG_TOGGLE_CAMERA_FLASH_STATE);
+            mHandler.obtainMessage(MSG_TOGGLE_CAMERA_FLASH_STATE,enable ? 1 : 0, 0, null).sendToTarget();
+        }
+    }
+
+    @Override
     public void setBlockedGesturalNavigation(boolean blocked) {
         synchronized (mLock) {
             if (mHandler.hasMessages(MSG_SET_BLOCKED_GESTURAL_NAVIGATION)) {
                 mHandler.removeMessages(MSG_SET_BLOCKED_GESTURAL_NAVIGATION);
             }
             mHandler.obtainMessage(MSG_SET_BLOCKED_GESTURAL_NAVIGATION, blocked).sendToTarget();
-        }
-    }
-
-    @Override
-    public void toggleCameraFlashState(boolean enable) {
-        synchronized (mLock) {
-            mHandler.removeMessages(MSG_TOGGLE_CAMERA_FLASH_STATE);
-            mHandler.obtainMessage(MSG_TOGGLE_CAMERA_FLASH_STATE,enable ? 1 : 0, 0, null).sendToTarget();
         }
     }
 
